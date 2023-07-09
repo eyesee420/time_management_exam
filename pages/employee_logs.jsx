@@ -8,7 +8,6 @@ const EmployeeLogs = () => {
     date: '',
     time_in: '',
     time_out: '',
-
   });
 
   useEffect(() => {
@@ -17,9 +16,17 @@ const EmployeeLogs = () => {
 
   const fetchData = async () => {
     try {
+      const cachedData = localStorage.getItem('Employee_Logs_Cache');
+      if (cachedData) {
+        setData(JSON.parse(cachedData));
+     
+        // console.log(cachedData);
+      }
+
       const response = await fetch('/api/endpoint');
       const jsonData = await response.json();
       setData(jsonData);
+      localStorage.setItem('Employee_Logs_Cache', JSON.stringify(jsonData));
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -34,7 +41,7 @@ const EmployeeLogs = () => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -44,42 +51,41 @@ const EmployeeLogs = () => {
       const response = await fetch(`/api/endpoint/${selectedItem._id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
         console.log('Form updated successfully');
-        fetchData();
+       fetchData();
+        // localStorage.removeItem('employeeLogsData'); // Remove cached data
       } else {
         console.error('Error updating form data:', response.status);
-        // Handle error case
       }
     } catch (error) {
       console.error('Error updating form data:', error);
-      // Handle error case
     }
   };
 
   const handleDeleteClick = async (id) => {
     try {
       const response = await fetch(`/api/endpoint/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       if (response.ok) {
-        fetchData();
+        // fetchData();
+        // localStorage.removeItem('employeeLogsData'); // Remove cached data
         console.log('Form deleted successfully');
       } else {
         console.error('Error deleting form data:', response.status);
-        // Handle error case
       }
     } catch (error) {
       console.error('Error deleting form data:', error);
-      // Handle error case
     }
   };
+
   const sortDataById = (data) => {
     const sortedData = [...data];
     sortedData.sort((a, b) => {
@@ -107,7 +113,7 @@ const EmployeeLogs = () => {
         </thead>
         <tbody>
           {/* Iterate over the data and display rows */}
-          {sortDataById(data).map((item)=> (
+          {sortDataById(data).map((item) => (
             <tr key={item._id}>
               <td>{item.employee_id}</td>
               <td>{item.date}</td>
@@ -126,48 +132,50 @@ const EmployeeLogs = () => {
 
       {/* Form */}
 
-      <div className="emp_form">
-      <form >
-        <h3>Employee ID: {formData.employee_id}</h3>
-        {/* <label htmlFor="id">employee_id</label> */}
-        {/* <input
-          id="id"
-          type="text"
-          name="name"
-        value={formData.employee_id || ''}
-          onChange={handleInputChange}
-        /> */}
-        <br />
-          <label htmlFor="date">Calendar</label>
-        <input
-          id='date'
-          type="date"
-          name="date"
-          value={formData.date || ''}
-          onChange={handleInputChange}
-        />
-        <br />
-        <br />
-        
-        <p>Time In</p>
-        <input
-          type="time"
-          name="time_in"
-          value={formData.time_in|| '' }
-          onChange={handleInputChange}
-        />
-        <br />
-        <br />
-        <p>Time Out</p>
-        <input
-          type="time"
-          name="time_out"
-          value={formData.time_out|| ''}
-          onChange={handleInputChange}
-        />
-        <br />
-        <button  onClick={handleFormSubmit} type="submit">Save</button>
-      </form>
+      <div className='emp_form'>
+        <form>
+          <h3>Employee ID: {formData.employee_id}</h3>
+          {/* <label htmlFor="id">employee_id</label> */}
+          {/* <input
+            id="id"
+            type="text"
+            name="name"
+            value={formData.employee_id || ''}
+            onChange={handleInputChange}
+          /> */}
+          <br />
+          <label htmlFor='date'>Calendar</label>
+          <input
+            id='date'
+            type='date'
+            name='date'
+            value={formData.date || ''}
+            onChange={handleInputChange}
+          />
+          <br />
+          <br />
+
+          <p>Time In</p>
+          <input
+            type='time'
+            name='time_in'
+            value={formData.time_in || ''}
+            onChange={handleInputChange}
+          />
+          <br />
+          <br />
+          <p>Time Out</p>
+          <input
+            type='time'
+            name='time_out'
+            value={formData.time_out || ''}
+            onChange={handleInputChange}
+          />
+          <br />
+          <button onClick={handleFormSubmit} type='submit'>
+            Save
+          </button>
+        </form>
       </div>
     </div>
   );

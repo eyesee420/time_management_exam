@@ -14,13 +14,19 @@ const Admin = () => {
 
   const fetchData = async () => {
     try {
+      const cachedData = localStorage.getItem('Admin_Cache');
+      if(cachedData){
+        setData(JSON.parse(cachedData));
+      }
       const response = await fetch('/api/endpoint');
       const jsonData = await response.json();
       setData(jsonData);
+      localStorage.setItem('Admin_Cache', JSON.stringify(jsonData));
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
+  
 
   const handlePost = (item) => {
     setSelectedItem(item);

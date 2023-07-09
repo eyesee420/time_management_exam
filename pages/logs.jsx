@@ -9,13 +9,19 @@ const Logs = () => {
 
   const fetchData = async () => {
     try {
+      const cachedData = localStorage.getItem('Process_Logs_Cache');
+      if(cachedData){
+        setData(JSON.parse(cachedData));
+      }
       const response = await fetch('/api/logs');
       const jsonData = await response.json();
       setData(jsonData);
+      localStorage.setItem('Process_Logs_Cache', JSON.stringify(jsonData));
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
+
 
   const calculateUndertime = (timeIn, timeOut) => {
     const timeInMinutes = convertToMinutes(timeIn);
