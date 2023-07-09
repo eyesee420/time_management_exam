@@ -59,7 +59,7 @@ const EmployeeLogs = () => {
       if (response.ok) {
         console.log('Form updated successfully');
        fetchData();
-        // localStorage.removeItem('employeeLogsData'); // Remove cached data
+        localStorage.removeItem('employeeLogsData'); // Remove cached data
       } else {
         console.error('Error updating form data:', response.status);
       }
@@ -75,8 +75,8 @@ const EmployeeLogs = () => {
       });
 
       if (response.ok) {
-        // fetchData();
-        // localStorage.removeItem('employeeLogsData'); // Remove cached data
+        fetchData();
+         localStorage.removeItem('employeeLogsData'); // Remove cached data
         console.log('Form deleted successfully');
       } else {
         console.error('Error deleting form data:', response.status);
